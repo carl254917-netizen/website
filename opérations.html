@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculs en colonne — Générateur accessible</title>
+  <style>
+    :root {
+      --bg: #111;
+      --fg: #f5f7fa;
+      --muted: #cfd8dc;
+      --accent: #4fd1c5;
+      --error: #ff6b6b;
+      --ok: #51cf66;
+    }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      background: linear-gradient(145deg,#0b0f13,#121821 55%,#0b0f13);
+      color: var(--fg);
+      margin: 0; padding: 2rem 1rem;
+      display: grid; place-items: start center;
+    }
+    header { max-width: 850px; width: 100%; margin-bottom: 1rem; }
+    h1 { font-size: clamp(1.6rem, 2.8vw, 2.2rem); margin: 0 0 .5rem; letter-spacing: .2px; }
+    p.lead { color: var(--muted); margin: 0; }
+
+    .panel {
+      max-width: 850px; width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      backdrop-filter: blur(6px);
+      padding: 1rem;
+    }
+
+    form.controls {
+      display: grid; gap: .75rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin-bottom: 1rem;
+    }
+    .control {
+      display: flex; flex-direction: column; gap: .35rem;
+    }
+    label { font-weight: 600; }
+    select, input[type="number"], button, input[type="text"] {
+      background: #0e141b; color: var(--fg);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px; padding: .6rem .7rem;
+      font-size: 1rem;
+    }
+    select:focus, input:focus, button:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .actions { display: flex; gap: .6rem; }
+    button.primary { background: var(--accent); color: #032b2a; border-color: transparent; font-weight: 700; }
+    button.secondary { background: transparent; border: 1px solid rgba(255,255,255,0.16); }
+
+    .exercise {
+      display: grid; gap: 1rem;
+      grid-template-columns: 1fr 280px;
+    }
+    @media (max-width: 760px) {
+      .exercise { grid-template-columns: 1fr; }
+    }
+
+    .column-ops {
+      display: inline-block;
+      padding: 1rem;
+      border-radius: 10px;
+      background: #0a0f15;
+      border: 1px solid rgba(255,255,255,0.08);
+      font-variant-numeric: tabular-nums lining-nums;
+    }
+    .row { display: grid; grid-auto-flow: column; gap: .3rem; justify-content: end; align-items: center; }
+    .digit { display: inline-block; min-width: 1ch; text-align: center; }
+    .op-sign { margin-right: .4rem; font-weight: 700; color: var(--muted); }
+    .separator { height: 1px; background: rgba(255,255,255,0.25); margin: .5rem 0 .4rem; }
+
+    .answer { display: flex; align-items: center; gap: .6rem; }
+    .answer input { flex: 1; font-variant-numeric: tabular-nums lining-nums; }
+    .feedback[aria-live] { min-height: 1.4rem; }
+    .feedback.ok { color: var(--ok); }
+    .feedback.err { color: var(--error); }
+
+    .note { color: var(--muted); font-size: .95rem; }
+    .pill { display: inline-block; padding: .2rem .5rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; margin-left: .4rem; font-size: .85rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Générateur de calculs en colonne</h1>
+    <p class="lead">Choisis l’opération, la longueur de chaque ligne, et si tu veux des retenues. Génère, répond, vérifie.</p>
+  </header>
+
+  <main class="panel" aria-label="Générateur de calculs">
+    <form class="controls" id="form" aria-describedby="hint">
+      <div class="control">
+        <label for="op">Opération</label>
+        <select id="op" name="op">
+          <option value="+">Addition (+)</option>
+          <option value="-">Soustraction (–)</option>
+          <option value="×">Multiplication (×)</option>
+          <option value="÷">Division (÷)</option>
+        </select>
+      </div>
+      <div class="control">
+        <label for="topLen">Chiffres en haut</label>
+        <input id="topLen" name="topLen" type="number" min="1" max="8" value="4" inputmode="numeric" />
+      </div>
+      <div class="control">
+        <label for="botLen">Chiffres en bas</label>
+        <input id="botLen" name="botLen" type="number" min="1" max="8" value="2" inputmode="numeric" />
+      </div>
+      <div class="control">
+        <label for="retenue">Retenues</label>
+        <select id="retenue" name="retenue">
+          <option value="auto">Auto</option>
+          <option value="avec">Avec retenues</option>
+          <option value="sans">Sans retenues</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button type="button" class="primary" id="generate">Générer</button>
+        <button type="button" class="secondary" id="reveal" aria-describedby="hint">Afficher la solution</button>
+      </div>
+      <p id="hint" class="note">“Retenues” s’applique de façon stricte à l’addition/soustraction, et aux produits pour la multiplication. Pour la division, on génère des quotients entiers; la notion de retenue n’est pas pertinente.</p>
+    </form>
+
+    <section class="exercise" aria-live="polite">
+      <div>
+        <div id="column" class="column-ops" aria-label="Calcul en colonne"></div>
+        <div class="answer" style="margin-top:.8rem;">
+          <label for="userAnswer">Résultat</label>
+          <input id="userAnswer" type="text" inputmode="numeric" aria-label="Saisir le résultat" />
+          <button type="button" id="check">Vérifier</button>
+        </div>
+        <div id="feedback" class="feedback" aria-live="polite"></div>
+      </div>
+      <aside>
+        <p class="note">Astuce<span class="pill">accessibilité</span><br/>Tu peux tabuler entre les champs et valider au clavier. Les nombres sont en police tabulaire pour l’alignement en colonne.</p>
+        <p class="note">Multiplication : nous vérifions les retenues sur les produits unitaires (ex. 7×8=56). Division : un quotient entier est garanti pour simplifier la correction.</p>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    // Utils
+    const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const randNDigits = (n) => {
+      if (n <= 0) return 0;
+      const first = randInt(1, 9);
+      let s = String(first);
+      for (let i = 1; i < n; i++) s += String(randInt(0, 9));
+      return Number(s);
+    };
+    const padLeftDigits = (numStr, len) => numStr.padStart(len, ' ');
+    const toDigits = (num, len) => padLeftDigits(String(num), len).split('');
+
+    // Carry/borrow checks for + and -
+    const hasAdditionCarry = (a, b) => {
+      const sa = String(a), sb = String(b);
+      const len = Math.max(sa.length, sb.length);
+      let carry = 0;
+      for (let i = 0; i < len; i++) {
+        const da = Number(sa[sa.length - 1 - i] ?? 0);
+        const db = Number(sb[sb.length - 1 - i] ?? 0);
+        const sum = da + db + carry;
+        if (sum >= 10) return true;
+        carry = sum >= 10 ? 1 : 0;
+      }
+      return false;
+    };
+    const additionNoCarry = (a, b) => {
+      const sa = String(a), sb = String(b);
+      const len = Math.max(sa.length, sb.length);
+      for (let i = 0; i < len; i++) {
+        const da = Number(sa[sa.length - 1 - i] ?? 0);
+        const db = Number(sb[sb.length - 1 - i] ?? 0);
+        if (da + db >= 10) return false;
+      }
+      return true;
+    };
+    const hasSubBorrow = (a, b) => {
+      const sa = String(a), sb = String(b);
+      const len = Math.max(sa.length, sb.length);
+      let borrow = 0;
+      for (let i = 0; i < len; i++) {
+        const da = Number(sa[sa.length - 1 - i] ?? 0) - borrow;
+        const db = Number(sb[sb.length - 1 - i] ?? 0);
+        if (da < db) return true;
+        borrow = da < db ? 1 : 0;
+      }
+      return false;
+    };
+    const subtractionNoBorrow = (a, b) => {
+      const sa = String(a), sb = String(b);
+      const len = Math.max(sa.length, sb.length);
+      let borrow = 0;
+      for (let i = 0; i < len; i++) {
+        const da = Number(sa[sa.length - 1 - i] ?? 0) - borrow;
+        const db = Number(sb[sb.length - 1 - i] ?? 0);
+        if (da < db) return false;
+        borrow = 0;
+      }
+      return true;
+    };
+
+    // Multiplication carry check on unit products (at least one >=10 when accounting for carry)
+    const hasMultiplicationCarry = (a, b) => {
+      const sa = String(a), sb = String(b);
+      for (let j = sb.length - 1; j >= 0; j--) {
+        let carry = 0;
+        const dj = Number(sb[j]);
+        for (let i = sa.length - 1; i >= 0; i--) {
+          const di = Number(sa[i]);
+          const prod = di * dj + carry;
+          if (prod >= 10) return true;
+          carry = Math.floor(prod / 10);
+        }
+      }
+      return false;
+    };
+    const multiplicationNoCarry = (a, b) => !hasMultiplicationCarry(a, b);
+
+    // Division: ensure integer quotient
+    const makeDivExact = (topLen, botLen) => {
+      const divisor = randNDigits(botLen);
+      const quotient = randNDigits(Math.max(1, Math.min(topLen - botLen + 1, 5)));
+      const dividend = divisor * quotient;
+      return { dividend, divisor, quotient };
+    };
+
+    function generateProblem(op, topLen, botLen, retenueMode) {
+      const maxTries = 500;
+      if (op === '+') {
+        for (let t = 0; t < maxTries; t++) {
+          const a = randNDigits(topLen);
+          const b = randNDigits(botLen);
+          if (retenueMode === 'avec' && hasAdditionCarry(a, b)) return { a, b, res: a + b };
+          if (retenueMode === 'sans' && additionNoCarry(a, b)) return { a, b, res: a + b };
+          if (retenueMode === 'auto') return { a, b, res: a + b };
+        }
+      } else if (op === '-') {
+        for (let t = 0; t < maxTries; t++) {
+          let a = randNDigits(topLen);
+          let b = randNDigits(botLen);
+          if (a < b) [a, b] = [b, a]; // éviter résultat négatif
+          if (retenueMode === 'avec' && hasSubBorrow(a, b)) return { a, b, res: a - b };
+          if (retenueMode === 'sans' && subtractionNoBorrow(a, b)) return { a, b, res: a - b };
+          if (retenueMode === 'auto') return { a, b, res: a - b };
+        }
+      } else if (op === '×') {
+        for (let t = 0; t < maxTries; t++) {
+          const a = randNDigits(topLen);
+          const b = randNDigits(botLen);
+          if (retenueMode === 'avec' && hasMultiplicationCarry(a, b)) return { a, b, res: a * b };
+          if (retenueMode === 'sans' && multiplicationNoCarry(a, b)) return { a, b, res: a * b };
+          if (retenueMode === 'auto') return { a, b, res: a * b };
+        }
+      } else if (op === '÷') {
+        const { dividend, divisor, quotient } = makeDivExact(topLen, botLen);
+        return { a: dividend, b: divisor, res: quotient };
+      }
+      // Fallback si contrainte trop stricte
+      return { a: randNDigits(topLen), b: randNDigits(botLen), res: null };
+    }
+
+    function renderColumn(op, a, b) {
+      const topStr = String(a), botStr = String(b);
+      const width = Math.max(topStr.length, botStr.length);
+      const topDigits = toDigits(a, width);
+      const botDigits = toDigits(b, width);
+
+      const wrap = document.createElement('div');
+      // Ligne du haut
+      const rowTop = document.createElement('div');
+      rowTop.className = 'row';
+      topDigits.forEach(d => {
+        const s = document.createElement('span');
+        s.className = 'digit';
+        s.textContent = d;
+        rowTop.appendChild(s);
+      });
+
+      // Ligne du bas avec signe
+      const rowBot = document.createElement('div');
+      rowBot.className = 'row';
+      const sign = document.createElement('span');
+      sign.className = 'op-sign';
+      sign.textContent = op;
+      rowBot.appendChild(sign);
+      botDigits.forEach(d => {
+        const s = document.createElement('span');
+        s.className = 'digit';
+        s.textContent = d;
+        rowBot.appendChild(s);
+      });
+
+      const sep = document.createElement('div');
+      sep.className = 'separator';
+
+      wrap.appendChild(rowTop);
+      wrap.appendChild(rowBot);
+      wrap.appendChild(sep);
+      return wrap;
+    }
+
+    // State
+    let current = { op: '+', a: 0, b: 0, res: 0 };
+
+    function updateUI() {
+      const column = document.getElementById('column');
+      column.innerHTML = '';
+      column.appendChild(renderColumn(current.op, current.a, current.b));
+      document.getElementById('userAnswer').value = '';
+      const fb = document.getElementById('feedback');
+      fb.textContent = '';
+      fb.className = 'feedback';
+    }
+
+    function showSolution() {
+      const fb = document.getElementById('feedback');
+      fb.textContent = `Solution : ${current.op === '÷' ? `${current.a} ÷ ${current.b} = ${current.res}` : current.res}`;
+      fb.className = 'feedback ok';
+    }
+
+    function checkAnswer() {
+      const val = document.getElementById('userAnswer').value.trim();
+      const fb = document.getElementById('feedback');
+      if (!val) {
+        fb.textContent = 'Entre une réponse pour vérifier.';
+        fb.className = 'feedback err';
+        return;
+      }
+      if (!/^\d+$/.test(val)) {
+        fb.textContent = 'La réponse doit être un entier numérique.';
+        fb.className = 'feedback err';
+        return;
+      }
+      const num = Number(val);
+      if (num === current.res) {
+        fb.textContent = 'Correct ✅';
+        fb.className = 'feedback ok';
+      } else {
+        fb.textContent = `Incorrect ❌ — Réponse attendue : ${current.res}`;
+        fb.className = 'feedback err';
+      }
+    }
+
+    // Bindings
+    document.getElementById('generate').addEventListener('click', () => {
+      const op = document.getElementById('op').value;
+      const topLen = Number(document.getElementById('topLen').value);
+      const botLen = Number(document.getElementById('botLen').value);
+      const retenue = document.getElementById('retenue').value;
+
+      current = { op, ...generateProblem(op, topLen, botLen, retenue) };
+      updateUI();
+    });
+
+    document.getElementById('check').addEventListener('click', checkAnswer);
+    document.getElementById('reveal').addEventListener('click', showSolution);
+
+    // Génération initiale
+    (function init() {
+      const op = document.getElementById('op').value;
+      const topLen = Number(document.getElementById('topLen').value);
+      const botLen = Number(document.getElementById('botLen').value);
+      const retenue = document.getElementById('retenue').value;
+      current = { op, ...generateProblem(op, topLen, botLen, retenue) };
+      updateUI();
+    })();
+
+    // Accessibilité : validation au clavier (Enter)
+    document.getElementById('userAnswer').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault(); checkAnswer();
+      }
+    });
+  </script>
+</body>
+</html>
