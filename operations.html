@@ -103,6 +103,10 @@
         </select>
       </div>
       <div class="control">
+        <label for="qty">Quantité</label>
+        <input id="qty" name="qty" type="number" min="1" max="20" value="1" inputmode="numeric" />
+      </div>
+      <div class="control">
         <label for="topLen">Chiffres en haut</label>
         <input id="topLen" name="topLen" type="number" min="1" max="8" value="4" inputmode="numeric" />
       </div>
@@ -128,11 +132,6 @@
     <section class="exercise" aria-live="polite">
       <div>
         <div id="column" class="column-ops" aria-label="Calcul en colonne"></div>
-        <div class="answer" style="margin-top:.8rem;">
-          <label for="userAnswer">Résultat</label>
-          <input id="userAnswer" type="text" inputmode="numeric" aria-label="Saisir le résultat" />
-          <button type="button" id="check">Vérifier</button>
-        </div>
         <div id="feedback" class="feedback" aria-live="polite"></div>
       </div>
       <aside>
@@ -304,71 +303,86 @@
       return wrap;
     }
 
-    // State
-    let current = { op: '+', a: 0, b: 0, res: 0 };
-
-    function updateUI() {
-      const column = document.getElementById('column');
-      column.innerHTML = '';
-      column.appendChild(renderColumn(current.op, current.a, current.b));
-      document.getElementById('userAnswer').value = '';
-      const fb = document.getElementById('feedback');
-      fb.textContent = '';
-      fb.className = 'feedback';
-    }
-
     function showSolution() {
-      const fb = document.getElementById('feedback');
-      fb.textContent = `Solution : ${current.op === '÷' ? `${current.a} ÷ ${current.b} = ${current.res}` : current.res}`;
-      fb.className = 'feedback ok';
-    }
-
-    function checkAnswer() {
-      const val = document.getElementById('userAnswer').value.trim();
-      const fb = document.getElementById('feedback');
-      if (!val) {
-        fb.textContent = 'Entre une réponse pour vérifier.';
-        fb.className = 'feedback err';
-        return;
-      }
-      if (!/^\d+$/.test(val)) {
-        fb.textContent = 'La réponse doit être un entier numérique.';
-        fb.className = 'feedback err';
-        return;
-      }
-      const num = Number(val);
-      if (num === current.res) {
-        fb.textContent = 'Correct ✅';
+      currentProblems.forEach((prob, idx) => {
+        const fb = document.getElementById(`feedback-${idx}`);
+        fb.textContent = `Solution : ${prob.res}`;
         fb.className = 'feedback ok';
-      } else {
-        fb.textContent = `Incorrect ❌ — Réponse attendue : ${current.res}`;
-        fb.className = 'feedback err';
-      }
+      });
     }
 
-    // Bindings
+    // State
+    let currentProblems = [];
+
+    // Génération
     document.getElementById('generate').addEventListener('click', () => {
       const op = document.getElementById('op').value;
       const topLen = Number(document.getElementById('topLen').value);
       const botLen = Number(document.getElementById('botLen').value);
       const retenue = document.getElementById('retenue').value;
+      const qty = Number(document.getElementById('qty').value);
 
-      current = { op, ...generateProblem(op, topLen, botLen, retenue) };
+      currentProblems = [];
+      for (let i = 0; i < qty; i++) {
+        currentProblems.push({ op, ...generateProblem(op, topLen, botLen, retenue) });
+      }
       updateUI();
     });
 
-    document.getElementById('check').addEventListener('click', checkAnswer);
-    document.getElementById('reveal').addEventListener('click', showSolution);
+    // Mise à jour de l’affichage
+    function updateUI() {
+      const column = document.getElementById('column');
+      column.innerHTML = '';
+      currentProblems.forEach((prob, idx) => {
+        const block = document.createElement('div');
+        block.style.marginBottom = '1rem';
+        block.appendChild(renderColumn(prob.op, prob.a, prob.b));
 
-    // Génération initiale
-    (function init() {
-      const op = document.getElementById('op').value;
-      const topLen = Number(document.getElementById('topLen').value);
-      const botLen = Number(document.getElementById('botLen').value);
-      const retenue = document.getElementById('retenue').value;
-      current = { op, ...generateProblem(op, topLen, botLen, retenue) };
-      updateUI();
-    })();
+        // champ réponse individuel
+        const ans = document.createElement('div');
+        ans.className = 'answer';
+        const label = document.createElement('label');
+        label.textContent = `Résultat #${idx+1}`;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.inputMode = 'numeric';
+        input.dataset.index = idx;
+        const btn = document.createElement('button');
+        btn.textContent = 'Vérifier';
+        btn.addEventListener('click', () => checkAnswer(idx, input.value));
+        ans.appendChild(label);
+        ans.appendChild(input);
+        ans.appendChild(btn);
+
+        const fb = document.createElement('div');
+        fb.id = `feedback-${idx}`;
+        fb.className = 'feedback';
+        fb.setAttribute('aria-live','polite');
+
+        block.appendChild(ans);
+        block.appendChild(fb);
+        column.appendChild(block);
+      });
+    }
+
+    // Vérification individuelle
+    function checkAnswer(idx, val) {
+      const fb = document.getElementById(`feedback-${idx}`);
+      const prob = currentProblems[idx];
+      if (!val.trim()) {
+        fb.textContent = 'Entre une réponse.';
+        fb.className = 'feedback err';
+        return;
+      }
+      const num = Number(val);
+      if (num === prob.res) {
+        fb.textContent = 'Correct ✅';
+        fb.className = 'feedback ok';
+      } else {
+        fb.textContent = `Incorrect ❌ — attendu : ${prob.res}`;
+        fb.className = 'feedback err';
+      }
+    }
 
     // Accessibilité : validation au clavier (Enter)
     document.getElementById('userAnswer').addEventListener('keydown', (e) => {
