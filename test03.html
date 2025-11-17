@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Introduction au Jeu de Rôle</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      text-align: center;
+      background: url('https://raw.githubusercontent.com/carl254917-netizen/ressources/main/Image_phi.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.6);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    p {
+      max-width: 600px;
+      font-size: 1.2em;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    /* Conteneur des boutons côte à côte */
+    .button-container {
+      display: flex;
+      gap: 20px; /* espace entre les boutons */
+      flex-wrap: wrap; /* permet de passer en dessous si écran trop petit */
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      font-size: 1.1em;
+      color: #fff;
+      background: linear-gradient(135deg, #6a1b9a, #8e24aa);
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #8e24aa, #ab47bc);
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.8em;
+      }
+      p {
+        font-size: 1em;
+      }
+      .button-container {
+        flex-direction: column; /* sur smartphone, les boutons passent l’un sous l’autre */
+        gap: 15px;
+      }
+      .btn {
+        width: 80%;
+        font-size: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <h1>Bienvenue dans l’Aventure</h1>
+    <p>
+      Entrez dans un monde où vos choix façonnent l’histoire. 
+      Préparez-vous à explorer, combattre et découvrir des secrets enfouis. 
+      Votre quête commence ici…
+    </p>
+    <div class="button-container">
+      <a href="page-personnage.html" class="btn">Créer votre personnage</a>
+      <a href="page-histoire.html" class="btn">Découvrir l’univers</a>
+    </div>
+  </div>
+</body>
+</html>
