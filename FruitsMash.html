@@ -27,15 +27,22 @@
     }
 
     async function vote(winner) {
+      const formData = new URLSearchParams();
+      formData.append("fruit1", fruit1);
+      formData.append("fruit2", fruit2);
+      formData.append("critere", critere);
+      formData.append("winner", winner);
+
       const res = await fetch(API_URL, {
         method: "POST",
-        body: JSON.stringify({ fruit1, fruit2, critere, winner }),
-        headers: { "Content-Type": "application/json" }
+        body: formData
       });
-      const result = await res.json();
+
+      const result = await res.text(); // ou .json() si tu renvoies du JSON
       console.log("Résultat du vote :", result);
-      loadMatchup(); // recharge un nouveau duel
+      loadMatchup();
     }
+
 
     document.getElementById("btn1").addEventListener("click", () => vote(fruit1));
     document.getElementById("btn2").addEventListener("click", () => vote(fruit2));
