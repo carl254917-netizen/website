@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>FruitsMash</title>
+</head>
+<body>
+  <h2 id="question">Chargement...</h2>
+  <button id="btn1">...</button>
+  <button id="btn2">...</button>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/TON_ID/exec";
+    let fruit1, fruit2, critere;
+
+    async function loadMatchup() {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+
+      fruit1 = data.fruit1;
+      fruit2 = data.fruit2;
+      critere = data.critere;
+
+      document.getElementById("question").textContent = `Cliquez sur le plus ${critere} :`;
+      document.getElementById("btn1").textContent = fruit1;
+      document.getElementById("btn2").textContent = fruit2;
+    }
+
+    async function vote(winner) {
+      await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ fruit1, fruit2, critere, winner }),
+        headers: { "Content-Type": "application/json" }
+      });
+      loadMatchup(); // recharge un nouveau duel
+    }
+
+    document.getElementById("btn1").addEventListener("click", () => vote(fruit1));
+    document.getElementById("btn2").addEventListener("click", () => vote(fruit2));
+
+    loadMatchup();
+  </script>
+</body>
+</html>
