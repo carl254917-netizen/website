@@ -2,53 +2,32 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Compteur de clics</title>
-  <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-    // ⚠️ Remplace par tes propres valeurs
-    const SUPABASE_URL = "https://vahtcknjdkkysmgpdhtd.supabase.co";
-    const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
-
-    const supabase = createClient(eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhaHRja25qZGtreXNtZ3BkaHRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1MjE4NzQsImV4cCI6MjA3OTA5Nzg3NH0._mEa-CCvtTMS_AesNL_q6MyMB1zBPliU5l6IpPWdLMk);
-
-    async function getClicks() {
-      const { data, error } = await supabase
-        .from("clicks")
-        .select("count")
-        .eq("id", 1)
-        .single();
-
-      if (error) {
-        console.error(error);
-        return 0;
-      }
-      return data.count;
-    }
-
-    async function updateClicks() {
-      const current = await getClicks();
-      const { error } = await supabase
-        .from("clicks")
-        .update({ count: current + 1 })
-        .eq("id", 1);
-
-      if (error) {
-        console.error(error);
-      }
-      document.getElementById("counter").innerText = current + 1;
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      const initial = await getClicks();
-      document.getElementById("counter").innerText = initial;
-
-      document.getElementById("clickBtn").addEventListener("click", updateClicks);
-    });
-  </script>
+  <title>Compteur Google Sheet</title>
 </head>
 <body>
-  <h1 id="counter">0</h1>
-  <button id="clickBtn">Clique-moi !</button>
+  <h1>Compteur</h1>
+  <p id="counter">Chargement...</p>
+  <button id="increment">+1</button>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzicsE9mDtEO5p3nV1R8RYCWkR6621LSHdL0ZZaptSxX0xbBlbhb_QAOgicB1XNi4KSAA/exec"; // remplace par l'URL du déploiement
+
+    async function loadValue() {
+      const res = await fetch(API_URL);
+      const value = await res.text();
+      document.getElementById("counter").textContent = value;
+    }
+
+    async function incrementValue() {
+      const res = await fetch(API_URL, { method: "POST" });
+      const value = await res.text();
+      document.getElementById("counter").textContent = value;
+    }
+
+    document.getElementById("increment").addEventListener("click", incrementValue);
+
+    // Charger la valeur au démarrage
+    loadValue();
+  </script>
 </body>
 </html>
