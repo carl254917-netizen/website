@@ -10,7 +10,7 @@
   <button id="btn2">...</button>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/TON_ID/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwODS6RAgTf9eMgVPJ77LBSQSPrvMBm1-9dqcYcQFPqLqx2MAA4OuKHj-2rxmlO1QSedw/exec";
     let fruit1, fruit2, critere;
 
     async function loadMatchup() {
