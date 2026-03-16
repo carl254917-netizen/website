@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dikos en ligne</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --accent: #3b82f6;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Styles des sections par thèmes */
+        .theme-section {
+            margin-bottom: 50px;
+        }
+
+        .theme-title {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+
+        .theme-title::before {
+            content: "◈";
+            margin-right: 15px;
+            color: var(--accent);
+        }
+
+        /* Grille des expressions */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        /* Carte d'expression */
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .expression {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .meaning {
+            display: inline-block;
+            background: #eff6ff;
+            color: #1d4ed8;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .context {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            border-left: 3px solid var(--border);
+            padding-left: 15px;
+            margin-top: 15px;
+        }
+
+        .context-label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Dikos</h1>
+        <p class="subtitle">car tout usage a ses conventions</p>
+    </header>
+
+    <section class="theme-section">
+        <h2 class="theme-title">Expressions courantes</h2>
+        
+        <div class="grid">
+            <article class="card">
+                <span class="expression">Kwadécaosa ?</span>
+                <span class="meaning">Pourquoi ? / Pour quelle raison ?</span>
+                <div class="context">
+                    <span class="context-label">Contexte d'usage & origine</span>
+                    De la locution "<i>Qua de causa ?</i>". Sert à quérir justification ou explication.
+                </div>
+            </article>
+
+            <article class="card">
+                <span class="expression">Rabide</span>
+                <span class="meaning">Excédé</span>
+                <div class="context">
+                    <span class="context-label">Contexte d'usage & origine</span>
+                    De "<i>rabidus</i>". Se dit d'un homme à qui la rage fait perdre raison.
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="theme-section">
+        <h2 class="theme-title">Termes spécifiques</h2>
+        
+        <div class="grid">
+            <article class="card">
+                <span class="expression">TDP</span>
+                <span class="meaning">Randonnée sylvestre</span>
+                <div class="context">
+                    <span class="context-label">Contexte d'usage & origine</span>
+                    Acronyme de "Tour De Parc". Exprime l'idée d'en changer.
+                </div>
+            </article>
+        </div>
+    </section>
+
+</div>
+
+</body>
+</html>
