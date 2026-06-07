@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recueil de Citations</title>
+    <style>
+        /* --- Styles globaux --- */
+        :root {
+            --primary-color: #2c3e50;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 50px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            font-size: 1.5em;
+        }
+
+        /* --- Liste des citations --- */
+        #quotes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .quote-card {
+            background: var(--card-bg);
+            padding: 25px 30px;
+            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            border-left: 4px solid var(--primary-color);
+            font-family: "Georgia", serif;
+            font-size: 1.15em;
+            color: #444;
+            transition: transform 0.2s ease;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Recueil de Citations</h1>
+        <div id="quotes-container">
+            </div>
+    </div>
+
+    <script>
+        /* * BASE DE DONNÉES DES CITATIONS
+         * Pour ajouter une citation, ajoutez simplement un bloc entre les accolades.
+         * Laissez 'context' vide ("") si vous n'en avez pas besoin.
+         */
+        const quotesDatabase = [
+            {
+                author: "Albert Camus",
+                context: "L'Étranger, 1942",
+                text: "Aujourd'hui, maman est morte. Ou peut-être hier, je ne sais pas."
+            },
+            {
+                author: "Victor Hugo",
+                context: "",
+                text: "La liberté commence où l'ignorance finit."
+            },
+            {
+                author: "Antoine de Saint-Exupéry",
+                context: "Le Petit Prince",
+                text: "On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux."
+            },
+            {
+                author: "René Descartes",
+                context: "Discours de la méthode, 1637",
+                text: "Je pense, donc je suis."
+            }
+        ];
+
+        // Fonction pour formater et afficher les citations
+        function displayQuotes() {
+            const container = document.getElementById('quotes-container');
+
+            quotesDatabase.forEach(quote => {
+                // Gestion de la présence ou non du contexte pour la virgule
+                const contextString = quote.context ? `, ${quote.context}` : "";
+                
+                // Formatage final : [auteur, contexte : "citation"]
+                const finalFormat = `${quote.author}${contextString} : "${quote.text}"`;
+
+                // Création et insertion de l'élément HTML
+                const quoteElement = document.createElement('div');
+                quoteElement.className = 'quote-card';
+                quoteElement.textContent = finalFormat;
+                
+                container.appendChild(quoteElement);
+            });
+        }
+
+        // Lancement de l'affichage au chargement de la page
+        displayQuotes();
+    </script>
+</body>
+</html>
