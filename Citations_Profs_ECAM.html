@@ -76,24 +76,59 @@
          */
         const quotesDatabase = [
             {
-                author: "Albert Camus",
-                context: "L'Étranger, 1942",
-                text: "Aujourd'hui, maman est morte. Ou peut-être hier, je ne sais pas."
-            },
-            {
-                author: "Victor Hugo",
+                author: "M. Grangé",
                 context: "",
-                text: "La liberté commence où l'ignorance finit."
+                text: "Je me réveille le matin, je me regarde dans le miroir, je me dis que je suis une m****, je monte dans ma Mercedes, et là je me sens mieux."
             },
             {
-                author: "Antoine de Saint-Exupéry",
-                context: "Le Petit Prince",
-                text: "On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux."
+                author: "M. Nourine",
+                context: "",
+                text: "Monsieur c'est quoi le bonheur ?<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;– C'est Centrale."
             },
             {
-                author: "René Descartes",
-                context: "Discours de la méthode, 1637",
-                text: "Je pense, donc je suis."
+                author: "M. Truchot",
+                context: "",
+                text: "C'est pas dérangeant de faire un abus si t'as conscience de faire un abus."
+            },
+            {
+                author: "M. Blanchard",
+                context: "",
+                text: "Quand j'étais petit j'étais alcoolique."
+            },
+            {
+                author: "M. Truchot",
+                context: "",
+                text: "Chacun vit les maths comme il l'entend — enfin j'espère."
+            },
+            {
+                author: "M. Hattab",
+                context: "",
+                text: "Là ça dépend donc ça monte et du coup je recule."
+            },
+            {
+                author: "M. Truchot",
+                context: "",
+                text: "J'suis pas que prof, j'suis humain."
+            },
+            {
+                author: "Mme. Couet",
+                context: "",
+                text: "Donc du coup, c'est intéressant."
+            },
+            {
+                author: "M. Truchot",
+                context: "",
+                text: "Moi j'suis un guerrier."
+            },
+            {
+                author: "Mme. Couet",
+                context: "",
+                text: "J'aime bien faire de l'escroquerie."
+            },
+            {
+                author: "M. Truchot",
+                context: "en allumant la lumière",
+                text: "Je vais faire de vous des esprits éclairés."
             }
         ];
 
@@ -106,12 +141,12 @@
                 const contextString = quote.context ? `, ${quote.context}` : "";
                 
                 // Formatage final : [auteur, contexte : "citation"]
-                const finalFormat = `${quote.author}${contextString} : "${quote.text}"`;
+                const finalFormat = `${quote.author}<i>${contextString}</i> : "${quote.text}"`;
 
                 // Création et insertion de l'élément HTML
                 const quoteElement = document.createElement('div');
                 quoteElement.className = 'quote-card';
-                quoteElement.textContent = finalFormat;
+                quoteElement.innerHTML = finalFormat;
                 
                 container.appendChild(quoteElement);
             });
