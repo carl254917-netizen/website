@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Arcade.py</title>
+    <!-- Police Inter pour un design sobre et propre -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(18, 24, 38, 0.75);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-1: #8b5cf6; /* Violet */
+            --accent-2: #06b6d4; /* Cyan */
+            --accent-3: #ec4899; /* Rose */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Effets d'arrière-plan lumineux et colorés */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--accent-1) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            opacity: 0.2;
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--accent-2) 0%, transparent 70%);
+            bottom: -100px;
+            right: -100px;
+            opacity: 0.2;
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        /* Sélecteur de langue */
+        .lang-selector {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            display: flex;
+            gap: 8px;
+            background: var(--card-bg);
+            padding: 6px;
+            border-radius: 9999px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 9999px;
+            transition: all 0.2s ease;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: white;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: var(--text-primary);
+        }
+
+        /* Conteneur principal (Carte) */
+        .container {
+            width: 100%;
+            max-width: 520px;
+            padding: 40px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            margin: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(139, 92, 242, 0.1);
+            color: var(--accent-1);
+            border: 1px solid rgba(139, 92, 242, 0.2);
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 900;
+            letter-spacing: -0.025em;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff 30%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        /* Animations de transition des couleurs du bouton */
+        @keyframes spectrumCycle {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes glowCycle {
+            0% { box-shadow: 0 10px 25px -5px rgba(139, 92, 242, 0.4); }
+            33% { box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.4); }
+            66% { box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.4); }
+            100% { box-shadow: 0 10px 25px -5px rgba(139, 92, 242, 0.4); }
+        }
+
+        /* Bouton de téléchargement stylisé avec spectre dynamique */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px 28px;
+            background: linear-gradient(270deg, var(--accent-1), var(--accent-2), var(--accent-3), #3b82f6, #10b981);
+            background-size: 400% 400%;
+            animation: spectrumCycle 10s ease infinite, glowCycle 10s ease infinite;
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 12px;
+            transition: transform 0.3s ease, filter 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.15);
+        }
+
+        .download-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            transition: transform 0.3s ease;
+        }
+
+        .download-btn:hover svg {
+            transform: translateY(3px);
+        }
+
+        /* Note sur les prérequis */
+        .prerequisite {
+            margin-top: 24px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .prerequisite span {
+            color: var(--accent-2);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sélecteur de langues -->
+    <div class="lang-selector">
+        <button class="lang-btn active" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" onclick="setLanguage('fr')">FR</button>
+        <button class="lang-btn" onclick="setLanguage('la')">LA</button>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="container">
+        <div class="badge" data-i18n="badge">Official Launcher</div>
+        <h1 data-i18n="title">Download Arcade.py</h1>
+        <p data-i18n="description">
+            Access the developer's entire library of Python games instantly with a lightweight, auto-updating program.
+        </p>
+        
+        <!-- Bouton utilisant la fonction JS pour forcer le téléchargement -->
+        <button class="download-btn" onclick="downloadFile()">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14.59V7h-2v9.59l-3.29-3.3-1.42 1.42L12 20.42l5.71-5.71-1.42-1.42L13 16.59z"/>
+            </svg>
+            <span data-i18n="btnText">Download Arcade.py</span>
+        </button>
+
+        <div class="prerequisite">
+            <span data-i18n="reqTitle">Prerequisite:</span> 
+            <span data-i18n="reqDesc">Python must be installed on your PC.</span>
+        </div>
+    </div>
+
+    <script>
+        // Remplacez cette URL par votre lien brut GitHub (raw.githubusercontent.com/...)
+        const GITHUB_RAW_URL = "https://raw.githubusercontent.com/carl254917-netizen/ressources/main/Arcade.py";
+
+        async function downloadFile() {
+            try {
+                // Récupère le contenu du fichier via l'API fetch
+                const response = await fetch(GITHUB_RAW_URL);
+                if (!response.ok) throw new Error("Erreur réseau");
+                
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+                
+                // Crée un lien virtuel invisible pour déclencher le téléchargement direct
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = 'Arcade.py';
+                document.body.appendChild(a);
+                a.click();
+                
+                // Nettoyage
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(blobUrl);
+            } catch (error) {
+                // En cas de blocage CORS inattendu, bascule vers une ouverture directe
+                window.open(GITHUB_RAW_URL, '_blank');
+            }
+        }
+
+        // Dictionnaire des traductions
+        const translations = {
+            en: {
+                badge: "OfficialLauncher",
+                title: "Download Arcade.py",
+                description: "Access the developer's entire library of Python games instantly with a lightweight, auto-updating program.",
+                btnText: "Download Arcade.py",
+                reqTitle: "Prerequisite:",
+                reqDesc: "Python must be installed on your PC."
+            },
+            fr: {
+                badge: "Lanceur Officiel",
+                title: "Télécharger Arcade.py",
+                description: "Accédez à l'intégralité des jeux Python du développeur grâce à un programme léger et auto-mis-à-jour.",
+                btnText: "Télécharger Arcade.py",
+                reqTitle: "Prérequis :",
+                reqDesc: "Python doit être installé sur votre PC."
+            },
+            la: {
+                badge: "Officialis Applicatio",
+                title: "Demerge Arcade.py",
+                description: "Totum ludorum Pythonicorum repertorium per leve et auto-renovatum programma statim accede.",
+                btnText: "Demerge Arcade.py",
+                reqTitle: "Praerequisitum:",
+                reqDesc: "Python in computatro tuo installatum esse debet."
+            }
+        };
+
+        function setLanguage(lang) {
+            document.querySelectorAll("[data-i18n]").forEach(element => {
+                const key = element.getAttribute("data-i18n");
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            document.querySelectorAll(".lang-btn").forEach(btn => {
+                btn.classList.remove("active");
+                if (btn.textContent.toLowerCase() === lang) {
+                    btn.classList.add("active");
+                }
+            });
+
+            document.documentElement.lang = lang;
+        }
+    </script>
+</body>
+</html>
